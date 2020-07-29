@@ -18,7 +18,7 @@ class UsersController < ApplicationController
       flash[:success] = "You've successfully created an account!"
       redirect_to user_path(result.user_id)
     else
-      flash[:error] = result.error_messages.join(' ')
+      flash[:danger] = result.error_messages.join(' ')
       redirect_to signup_path
     end
   end

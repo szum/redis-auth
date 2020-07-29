@@ -1,6 +1,6 @@
-<h1 class='text-center'>Sign up</h1>
+<h1 class='text-center'>Redis-auth 🔒</h1>
 
-<p>
+<p class='text-center'>
   Sign up or <%= link_to "Log in", login_path %> to test the app.
 <p>
 
@@ -8,15 +8,17 @@
   <div class="col-md-4 offset-4">
     <%= form_with(model: @user, local: true) do |f| %>
       <%= f.label :name %>
-      <%= f.text_field :name %>
+      <%= f.text_field :name, class: 'mb-1 form-control' %>
 
       <%= f.label :password %>
-      <%= f.password_field :password %>
+      <%= f.password_field :password, class: 'mb-1 form-control' %>
 
       <%= f.label :password_confirmation, "Password Confirmation" %>
-      <%= f.password_field :password_confirmation %>
+      <%= f.password_field :password_confirmation, class: 'mb-1 form-control' %>
 
-      <%= f.submit "Sign up" %>
+      <div class="col text-center">
+        <%= f.submit "Sign up", class: "mt-4 btn btn-primary" %>
+      </div>
     <% end %>
   </div>
 </div>

@@ -8,15 +8,17 @@ class SessionsController < ApplicationController
     if user && has_valid_password?
       log_in(user_id)
       respond_to do |format|
-        format.html { redirect_to user_path(user_id) }
+        format.html {
+          flash[:success] = "Welcome!"
+          redirect_to user_path(user_id)
+        }
         format.json { render json: { user: user, success: "Welcome!" }, status: 200 }
       end
     else
       message = 'Invalid user name & password combination'
-      flash.now[:danger] = message
       respond_to do |format|
         format.html {
-          flash[:error] = message
+          flash[:danger] = message
           redirect_to login_path
         }
         format.json { render json: { errors: [message] }, status: 401 }
