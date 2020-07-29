@@ -2,7 +2,7 @@ class User
   include ActiveModel::Model
   include ActiveModel::Validations
 
-  attr_accessor :id, :name, :email
+  attr_accessor :id, :name
   attr_reader :password, :password_confirmation
 
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i

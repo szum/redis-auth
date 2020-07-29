@@ -3,47 +3,44 @@ require 'bcrypt'
 class CreateUser
   include ActiveModel::Validations
 
-  attr_reader :email, :name, :password, :password_confirmation
+  attr_reader :name, :password, :password_confirmation
   attr_accessor :success, :error_messages
+
+  PASSWORD_REQUIREMENTS = /\
+    (?=.{8,}) # Must be at least 8 characters
+    (?=.*\d) # Contains at least one number
+    (?=.*[a-z]) # Contains at least one lowercase letter
+    (?=.*[A-Z]) # Contains at least one uppercase letter
+    (?=.*[[:^alnum:]]) # Contains at least one symbol
+  /x
 
   def self.call(*args)
     new(*args).call
   end
 
   def initialize(user_params)
-    # @email = session_params.fetch(:email)
-    # @password = session_params.fetch(:password)
+    @id = nil
     @name = user_params.fetch(:name).downcase
-    @email = user_params.fetch(:email).downcase
-    @password = BCrypt::Password.create(user_params.fetch(:password))
-    @password_confirmation = BCrypt::Password.create(user_params.fetch(:password_confirmation))
+    @password = user_params.fetch(:password)
+    @password_confirmation = user_params.fetch(:password_confirmation)
     self.error_messages = []
   end
 
   def call
-    # if authentication_successful?
-    #   user.update(failed_attempts: 0)
-    #   @success = true
-    # else
-    #   @success = false
-    #   handle_authentication_failure
-    # end
     validate_username_uniqueness!
-    validate_email_uniqueness!
     validate_password_presence!
+    validate_password_complexity!
     validate_confirmation_of_password!
 
     if valid?
+      bcrypt_password!
       @id = generate_id!
       whitelist_username!
-      whitelist_email!
 
-      redis_create = REDIS.mapped_hmset("user:#{@name}", {
+      redis_create = REDIS.mapped_hmset("user:#{@id}", {
         "id" => @id,
         "name" => @name,
-        "email" => @email,
         "password" => @password,
-        "password_confirmation" => @password_confirmation
       })
 
       self.success = redis_create == "OK"
@@ -54,12 +51,27 @@ class CreateUser
   end
 
   private
-  def whitelist_username!
-    REDIS.hset('users:', @name, @id)
+
+  def bcrypt_password!
+    @password = BCrypt::Password.create(@password)
+    @password_confirmation = nil
   end
 
-  def whitelist_email!
-    REDIS.hset('emails:', @email, @id)
+  def validate_password_complexity!
+    rules = {
+      "Password must contain at least one lowercase letter."  => /[a-z]+/,
+      "Password must contain at least one uppercase letter."  => /[A-Z]+/,
+      "Password must contain at least one digit."             => /\d+/,
+      "Password must contain at least one special character." => /[^A-Za-z0-9]+/
+    }
+
+    rules.each do |message, regex|
+      self.error_messages << message unless @password.match(regex)
+    end
+  end
+
+  def whitelist_username!
+    REDIS.hset('users:', @name, @id)
   end
 
   def generate_id!
@@ -67,20 +79,12 @@ class CreateUser
   end
 
   def valid?
-    true
-    # self.error_messages.empty?
+    self.error_messages.empty?
   end
 
   def validate_username_uniqueness!
     if REDIS.hget('users:', @name)
-      self.error_messages << "Username is taken. Type in a username that's unique"
-    end
-    true
-  end
-
-  def validate_email_uniqueness!
-    if REDIS.hget('emails:', @name)
-      self.error_messages << "A user has already registered with that email."
+      self.error_messages << "Username is taken. Type in a username that's unique."
     end
     true
   end
@@ -100,17 +104,6 @@ class CreateUser
   end
 
   def result
-    OpenStruct.new(success?: self.success, error_messages: self.error_messages, user_id: @id)
+    OpenStruct.new(success?: self.success, error_messages: self.error_messages, user_id: @id, user_name: @name)
   end
-
-  # def authentication_successful?
-  #   return false unless user
-  #   user.login_allowed? && user.authenticate(password)
-  # end
-
-  # def handle_authentication_failure
-  #   return unless user
-  #   user.increment!(:failed_attempts)
-  #   @error_message = 'You are locked' unless user.login_allowed?
-  # end
 end

@@ -1,11 +1,15 @@
 <h1 class='text-center'>Log in</h1>
 
+<p>
+  Log in or <%= link_to "Sign up", signup_path %> to test the app.
+<p>
+
 <div class="row">
   <div class="col-md-6 offset-3">
     <%= form_with(url: login_path, scope: :session, local: true) do |f| %>
 
-      <%= f.label :email %>
-      <%= f.email_field :email %>
+      <%= f.label :name %>
+      <%= f.text_field :name %>
 
       <%= f.label :password %>
       <%= f.password_field :password %>

@@ -1,6 +1,9 @@
 require 'rails_helper'
+require 'redis_spec_helper'
 
-RSpec.describe UsersController, type: :controller do
+RSpec.describe SessionsController, type: :controller do
+  let!(:redis) { Redis.new }
+
   # describe "GET #index" do
   #   it "populates an array of contacts" do
   #     contact = Factory(:contact)
@@ -28,29 +31,22 @@ RSpec.describe UsersController, type: :controller do
   # end
 
   describe "POST create" do
+    before do
+      CreateUser.call({ name: 'szum', password: 'lol', password_confirmation: 'lol'})
+    end
     context "with valid attributes" do
       it "creates a new user and redirects to user show" do
-        post :create, params: { user: { "name": "szum", "email": "lukas@test.org", "password": "lol", "password_confirmation": "lol" } }
+        post :create, params: { session: { "name": "szum", "password": "lol" } }
         expect(flash['success']).should be_present
-        expect(response.status).to eq(302)
-      end
-
-      it "redirects to the new contact" do
-        post :create, contact: Factory.attributes_for(:contact)
-        response.should redirect_to Contact.last
+        expect(response.status).to eq(200)
       end
     end
 
     context "with invalid attributes" do
       it "does not save the new contact" do
-        expect{
-          post :create, contact: Factory.attributes_for(:invalid_contact)
-        }.to_not change(Contact,:count)
-      end
-
-      it "re-renders the new method" do
-        post :create, contact: Factory.attributes_for(:invalid_contact)
-        response.should render_template :new
+        post :create, params: { session: { "name": "szum", "password": "invalidpassword" } }
+        expect(flash['danger']).should be_present
+        expect(response.status).to eq(401)
       end
     end
   end

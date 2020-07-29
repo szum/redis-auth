@@ -15,15 +15,10 @@
         <div class="alert alert-<%= message_type %>"><%= message %></div>
       <% end %>
       <br/>
-      <%= render 'errors/error_messages' %>
       <% if logged_in? %>
         <ul class="nav navbar-right ">
           <li><%= link_to "Log out", logout_path, class: "mx-2", method: :delete %></li>
         </ul>
-      <% else %>
-        <p>
-          Sign up or <%= link_to "Log in", login_path %> to test the app.
-        <p>
       <% end %>
       <%= yield %>
     </div>

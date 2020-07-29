@@ -1,8 +1,10 @@
 class UsersController < ApplicationController
+  include SessionsHelper
+
   before_action :require_authentication, only: [:show]
 
   def show
-    @user = User.find(params[:id])
+    @user = current_user
   end
 
   def new
@@ -13,17 +15,17 @@ class UsersController < ApplicationController
     result = CreateUser.call(user_params)
     if result.success?
       log_in(result.user_id)
-      flash[:success]
-      render json: { user: result }
+      flash[:success] = "You've successfully created an account!"
+      redirect_to user_path(result.user_id)
     else
       flash[:error] = result.error_messages.join(' ')
-      render 'new'
+      redirect_to signup_path
     end
   end
 
   private
 
   def user_params
-    params.require(:user).permit(:name, :email, :password, :password_confirmation)
+    params.require(:user).permit(:name, :password, :password_confirmation)
   end
 end
