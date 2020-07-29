@@ -1,9 +1,4 @@
 module SessionsHelper
-
-  def log_in(user)
-    session[:user_id] = user.id
-  end
-
   def current_user
     if session[:user_id]
       @current_user ||= User.find_by(id: session[:user_id])
@@ -23,16 +18,11 @@ module SessionsHelper
     user == current_user
   end
 
-  def redirect_back_or(default)
-    redirect_to(session[:user_return_to] || default)
-    session.delete(:user_return_to)
-  end
-
   private
   def require_authentication
     unless logged_in?
       store_location
-      flash[:danger] = "Please log in."
+      flash[:danger] = "You need to be logged in."
       redirect_to login_url
     end
   end

@@ -10,11 +10,13 @@ class UsersController < ApplicationController
   end
 
   def create
-    @user = redis.new(user_params)
-    if @user.save
+    result = CreateUser.call(user_params)
+    if result.success?
+      log_in(result.user_id)
       flash[:success]
-      redirect_to @user
+      render json: { user: result }
     else
+      flash[:error] = result.error_messages.join(' ')
       render 'new'
     end
   end

@@ -3,10 +3,9 @@ class SessionsController < ApplicationController
   end
 
   def create
-    user = User.find_by(email: params[:session][:email].downcase)
-    if user && user.authenticate(params[:session][:password])
-      log_in user
-      redirect_back_or user
+    if user && has_valid_password?
+      log_in(user.first)
+      render json: { user: user, success: "Welcome!" }
     else
       flash.now[:danger] = 'Invalid email/password combination'
       render 'new'
@@ -15,6 +14,21 @@ class SessionsController < ApplicationController
 
   def destroy
     log_out
+    session.delete(:current_user_id)
+    # Clear the memoized current user
+    @_current_user = nil
     redirect_to root_url
+  end
+
+  private
+
+  def user
+    @user = REDIS.hget("#{params[:session][:name].downcase}", 'id', 'name', 'email', 'password')
+  end
+
+  def
+
+  def has_valid_password?
+    BCrypt::Password.new(@user.last) == [:session][:password]
   end
 end
