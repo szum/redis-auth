@@ -1,4 +1,4 @@
 RSpec.configure do |config|
-  config.before(:each) { redis.flushdb }
-  config.after(:each) { redis.quit }
+  config.before(:each) { REDIS.flushdb }
+  config.after(:each) { REDIS.quit }
 end

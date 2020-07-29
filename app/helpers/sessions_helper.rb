@@ -6,6 +6,7 @@ module SessionsHelper
   end
 
   def log_in(user_id)
+    reset_session
     session[:user_id] = user_id
   end
 
@@ -16,6 +17,7 @@ module SessionsHelper
   def log_out!
     session.delete(:user_id)
     @current_user = nil
+    reset_session
   end
 
   def current_user?(user)

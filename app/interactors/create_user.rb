@@ -6,14 +6,6 @@ class CreateUser
   attr_reader :name, :password, :password_confirmation
   attr_accessor :success, :error_messages
 
-  PASSWORD_REQUIREMENTS = /\
-    (?=.{8,}) # Must be at least 8 characters
-    (?=.*\d) # Contains at least one number
-    (?=.*[a-z]) # Contains at least one lowercase letter
-    (?=.*[A-Z]) # Contains at least one uppercase letter
-    (?=.*[[:^alnum:]]) # Contains at least one symbol
-  /x
-
   def self.call(*args)
     new(*args).call
   end
