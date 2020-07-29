@@ -38,7 +38,7 @@ class SessionsController < ApplicationController
   end
 
   def user
-    @user = REDIS.hmget("user:#{user_id}", 'id', 'name', 'password')
+    @user ||= REDIS.hmget("user:#{user_id}", 'id', 'name', 'password')
   end
 
   def user_id

@@ -1,24 +1,15 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+A tableless authentication app that uses Redis for user storage. The Create Interactor validates and handles user parameters, hashes passwords using Bcrypt, and then stores the user as a Hash in a Redis database.
 
-Things you may want to cover:
+Future development:
 
-* Ruby version
+Login session tokens - to elminate vulnerabilities to a replay attack we can add a login token (uuid) on the user and store it on the session instead of the user id. This will make it much harder to guess a user's other credentials if somehow their session gets captured
 
-* System dependencies
+Expiring sessions - expire user sessions after a certain amount of time to reset sessions periodically to prevent cases where a session may be captured or fixated maliciously
 
-* Configuration
+Redis Locks - as the app scales locks will prevent retries when writing to the db as latency increases
 
-* Database creation
+Redis pipelining - Redis commands can be consolidated into a pipeline to increase execution time
 
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+Relational database - if we add more user data and the size of the db increases, it can become larger than memory, we'll need to leverage some values being stored in a relational db

@@ -1,8 +1,6 @@
 require 'bcrypt'
 
 class CreateUser
-  include ActiveModel::Validations
-
   attr_reader :name, :password, :password_confirmation
   attr_accessor :success, :error_messages
 
