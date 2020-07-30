@@ -14,4 +14,4 @@ Redis Locks - as the app scales up locks will prevent retries when writing to th
 
 Redis pipelining - Redis commands can be consolidated into a pipeline to increase execution time
 
-Relational database - if we add more user data and the size of the db increases, it can become larger than memory, we'll need to leverage some values being stored in a relational db
+Relational database - if we add more user data and the size of the db increases, the db can be larger than the amount of memory available in Redis, we can leverage a relational database to store some values that don't need to be fetched so quickly
