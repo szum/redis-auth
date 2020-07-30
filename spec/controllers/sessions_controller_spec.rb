@@ -50,10 +50,20 @@ RSpec.describe SessionsController, type: :controller do
     end
 
     context "with logged in user" do
-      it "destroys the session" do
-        post :create, params: { session: { "name": "szum", "password": "Testing123!" } }, format: :json
+      it "destroys the session and redirects to the signup page" do
+        post :create, params: { session: { "name": "szum", "password": "Testing123!" } }
         delete :destroy
-        expect(delete).to eq(200)
+        expect(response.status).to eq(302)
+        expect(response).to redirect_to signup_path
+      end
+    end
+
+
+    context "with logged in user JSON request" do
+      it "should return 200 success" do
+        post :create, params: { session: { "name": "szum", "password": "Testing123!" } }
+        delete :destroy, format: :json
+        expect(response.status).to eq(200)
       end
     end
   end

@@ -2,12 +2,25 @@ require 'rails_helper'
 require 'redis_spec_helper'
 
 RSpec.describe UsersController, type: :controller do
-  # describe "GET show" do
-  #   context "with no session" do
-  #     get :show, id: 1
 
-  #   end
-  # end
+  describe "GET show" do
+    context "with no session" do
+      it "redirects to login" do
+        get :show, params: { id: 1 }, format: :json
+        expect(response.status).to eq(302)
+        expect(flash['danger']).to include ("You need to be logged in.")
+        expect(response).to redirect_to login_url
+      end
+    end
+
+    context "with an existing session" do
+      it "renders user show page" do
+        post :create, params: { user: { "name": "szum", "password": "Testing123!", "password_confirmation": "Testing123!" } }
+        get :show, params: { id: 1 }
+        expect(response.status).to eq(200)
+      end
+    end
+  end
 
   describe "POST create" do
     context "with valid attributes" do

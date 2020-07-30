@@ -28,7 +28,10 @@ class SessionsController < ApplicationController
 
   def destroy
     log_out!
-    redirect_to signup_path
+    respond_to do |format|
+      format.html { redirect_to signup_path }
+      format.json { render json: { success: "Session successfully deleted" }, status: 200 }
+    end
   end
 
   private
