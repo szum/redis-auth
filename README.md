@@ -6,11 +6,11 @@ A tableless authentication app that uses Redis for user storage. The Create Inte
 
 Future development:
 
-Login session tokens - to elminate vulnerabilities to a replay attack we can add a login token (uuid) on the user and store it on the session instead of the user id. This will make it much harder to guess a user's other credentials if somehow their session gets captured
+Login session tokens - to elminate possible vulnerabilities in a replay attack we can add a login token (uuid) on the user and store it on the session instead of the user id. This will make it much harder to guess a user's other credentials if somehow their session gets captured by a third party
 
-Expiring sessions - expire user sessions after a certain amount of time to reset sessions periodically to prevent cases where a session may be captured or fixated maliciously
+Expiring sessions - expire user sessions after a certain amount of time. Reseting sessions periodically will prevent cases where an existing session may be captured or fixated maliciously
 
-Redis Locks - as the app scales locks will prevent retries when writing to the db as latency increases
+Redis Locks - as the app scales up locks will prevent retries when writing to the Redis db when latency increases
 
 Redis pipelining - Redis commands can be consolidated into a pipeline to increase execution time
 
