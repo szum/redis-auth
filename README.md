@@ -2,7 +2,7 @@
 
 A tableless authentication app that uses Redis for user storage. The Create Interactor validates and handles user parameters, hashes passwords using Bcrypt, and then stores the user as a Hash in a Redis database.
 
-![alt text](https://i.imgur.com/CvEJhVd.png)
+![alt text](https://i.imgur.com/CvEJhVd.png | width=100)
 
 Future development:
 
